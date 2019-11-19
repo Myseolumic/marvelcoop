@@ -165,7 +165,9 @@ class MarvelmindHedge (Thread):
                                 isImuMessageDetected = True
                                 if (self.debug): print ('Message with processed IMU data was detected')
                             msgLen = ord(bufferList[pktHdrOffset + 4])
-                            if (self.debug): print ('Message length: ', msgLen)
+                            if (self.debug): 
+                                print ('Message length: ', msgLen)
+                                print ('Message(with offset): ', bufferList[pktHdrOffset + 4])
 
                             try:
                                 if (len(bufferList) > pktHdrOffset + 4 + msgLen + 2):
