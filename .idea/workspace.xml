@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b20a8964-10fd-408a-8534-93c7f844e0cf" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/marvelcoop.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/marvelcoop.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/tracker.py" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,85 +16,28 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/marvelcoop$tracker.coverage" NAME="tracker Coverage Results" MODIFIED="1575386615678" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/tracker.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="74">
-              <caret line="6" selection-start-line="6" selection-end-line="6" />
-              <folding>
-                <element signature="e#0#38#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/marvelmind.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2771">
-              <caret line="169" column="94" selection-start-line="169" selection-start-column="94" selection-end-line="169" selection-end-column="94" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
-  </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
       <list>
-        <option value="$PROJECT_DIR$/marvelmind.py" />
-        <option value="$PROJECT_DIR$/tracker.py" />
+        <option value="-" />
       </list>
     </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="230" />
-    <option name="y" value="25" />
-    <option name="width" value="1570" />
-    <option name="height" value="1047" />
-  </component>
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="marvelcoop" type="b2602c69:ProjectViewProjectNode" />
-              <item name="marvelcoop" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-    </panes>
+  <component name="ProjectId" id="1Wj7d6pXGxS5aeBANKIi07QjiuZ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager">
     <configuration name="tracker" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -122,6 +68,18 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -147,6 +105,15 @@
       <workItem from="1573841610688" duration="24972000" />
       <workItem from="1575045310568" duration="3201000" />
       <workItem from="1578673829380" duration="806000" />
+      <workItem from="1579651239202" duration="1677000" />
+      <workItem from="1579725911462" duration="19538000" />
+      <workItem from="1582211477717" duration="800000" />
+      <workItem from="1582574243993" duration="5509000" />
+      <workItem from="1584534934949" duration="12000" />
+      <workItem from="1584883291904" duration="608000" />
+      <workItem from="1585660143268" duration="13180000" />
+      <workItem from="1586253591010" duration="3667000" />
+      <workItem from="1586627885364" duration="9575000" />
     </task>
     <task id="LOCAL-00001" summary="A lot of changes:&#10;- working replay system, needs optimizing&#10;- interfacing with marvelmind.py works. Just need to add more functionality&#10;- can now set coordinate origin by clicking on canvas">
       <created>1574173749880</created>
@@ -155,62 +122,92 @@
       <option name="project" value="LOCAL" />
       <updated>1574173749880</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Pre-commit:&#10;- added some threading things and testing them out">
+      <created>1582628203551</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1582628203551</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
-  </component>
-  <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="87475000" />
-  </component>
-  <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12633263" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49946696" weight="0.3380744" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="Database Changes" order="9" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50053304" side_tool="true" weight="0.3347779" />
-      <window_info anchor="bottom" id="Terminal" order="11" />
-      <window_info anchor="bottom" id="Python Console" order="12" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="SciView" order="3" />
-      <window_info anchor="right" id="Database" order="4" />
-    </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="A lot of changes:&#10;- working replay system, needs optimizing&#10;- interfacing with marvelmind.py works. Just need to add more functionality&#10;- can now set coordinate origin by clicking on canvas" />
-    <option name="LAST_COMMIT_MESSAGE" value="A lot of changes:&#10;- working replay system, needs optimizing&#10;- interfacing with marvelmind.py works. Just need to add more functionality&#10;- can now set coordinate origin by clicking on canvas" />
+    <MESSAGE value="Pre-commit:&#10;- added some threading things and testing them out" />
+    <option name="LAST_COMMIT_MESSAGE" value="Pre-commit:&#10;- added some threading things and testing them out" />
   </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/tracker.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="74">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/marvelmind.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2771">
-          <caret line="169" column="94" selection-start-line="169" selection-start-column="94" selection-end-line="169" selection-end-column="94" />
-        </state>
-      </provider>
-    </entry>
+  <component name="WindowStateProjectService">
+    <state x="-1368" y="179" key="#Notifications" timestamp="1582624508667">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1368" y="179" key="#Notifications/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1582624508667" />
+    <state x="-1410" y="85" key="CommitChangelistDialog2" timestamp="1582628202760">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1410" y="85" key="CommitChangelistDialog2/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1582628202760" />
+    <state x="-946" y="265" key="FileChooserDialogImpl" timestamp="1579727385215">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-946" y="265" key="FileChooserDialogImpl/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1579727385215" />
+    <state width="1877" height="306" key="GridCell.Tab.0.bottom" timestamp="1586648663849">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="306" key="GridCell.Tab.0.bottom/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586648663849" />
+    <state width="1877" height="306" key="GridCell.Tab.0.bottom/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1586031861281" />
+    <state width="1877" height="306" key="GridCell.Tab.0.center" timestamp="1586648663848">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="306" key="GridCell.Tab.0.center/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586648663848" />
+    <state width="1877" height="306" key="GridCell.Tab.0.center/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1586031861281" />
+    <state width="1877" height="306" key="GridCell.Tab.0.left" timestamp="1586648663848">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="306" key="GridCell.Tab.0.left/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586648663848" />
+    <state width="1877" height="306" key="GridCell.Tab.0.left/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1586031861281" />
+    <state width="1877" height="306" key="GridCell.Tab.0.right" timestamp="1586648663849">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="306" key="GridCell.Tab.0.right/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586648663849" />
+    <state width="1877" height="306" key="GridCell.Tab.0.right/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1586031861281" />
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1586253576311">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586253576311" />
+    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1586253576311">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.center/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586253576311" />
+    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1586253576311">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.left/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586253576311" />
+    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1586253576311">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.right/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586253576311" />
+    <state x="-1224" y="153" key="SettingsEditor" timestamp="1579727788243">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1224" y="153" key="SettingsEditor/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1579727788243" />
+    <state x="-1368" y="254" key="Vcs.Push.Dialog.v2" timestamp="1582628207935">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1368" y="254" key="Vcs.Push.Dialog.v2/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1582628207935" />
+    <state x="-1252" y="349" key="com.intellij.ide.util.TipDialog" timestamp="1586627888144">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1252" y="349" key="com.intellij.ide.util.TipDialog/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586627888144" />
+    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1586201486060">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586201486060" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1579732338658" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/marvelcoop$tracker.coverage" NAME="tracker Coverage Results" MODIFIED="1586648663841" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

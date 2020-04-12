@@ -17,7 +17,7 @@ class SampleApp(Tk):
         self.title("Coopi tracker")
         # self.commThread = CommThread()
         # self.commThread.setDaemon(True)
-        self.switch_frame(TrackingFrame)
+        self.switch_frame(ReplayFrame)
 
     def switch_frame(self, frame_class):
         print("switched window")
@@ -32,13 +32,15 @@ class BeaconPath(object):
     def __init__(self, id, mat):
         self.start_point = (mat[0][0], mat[0][1])
         self.id = id
-        self.vectors = np.empty((1, 3))
         self.points = mat[:]
 
+        # Create temporary list to later use for building the numpy array
+        temp_l = []
         for i in range(len(mat) - 1):
             vector_x = mat[i + 1][0] - mat[i][0]
             vector_y = mat[i + 1][1] - mat[i][1]
-            np.append(self.vectors, [vector_x, vector_y, mat[i + 1][4]], axis=0)
+            temp_l.append([vector_x, vector_y, mat[i + 1][4]])
+        self.vectors = np.asarray(temp_l)
 
     def captured_time(self):
         return self.points[0][4], self.points[-1][4]
@@ -86,11 +88,16 @@ class ReplayFrame(Frame):
         prev_parts = None
         for line in self.file.readlines():
             parts = line.strip().replace(' ', '')[1:-1].split(',')
+
+            for i in range(len(parts[1:-1])):
+                parts[i + 1] = float(parts[i + 1])
+            parts[-1] = int(parts[-1])
             if parts == prev_parts:
                 continue
 
             if parts[0] not in beacons.keys():
                 beacons[parts[0]] = []
+
             beacons[parts[0]].append(parts[1:])
             prev_parts = parts[:]
         self.file.close()
@@ -111,6 +118,7 @@ class ReplayFrame(Frame):
         self.scale = Scale(self, from_=self.start_time, to=self.end_time, orient=HORIZONTAL, command=self.update_canvas) \
             .grid(row=1, column=0, columnspan=3, sticky=W)
 
+        # Setup Checkboxes for enabling beacons
         j = 0
         self.beacons_container = Frame(self, borderwidth=1)
         for beacon in self.beacon_paths:
@@ -120,25 +128,30 @@ class ReplayFrame(Frame):
             j += 1
         self.beacons_container.grid(row=0, column=0, sticky=W)
 
-    # TODO: finish reworking this to work with vectors and scale
+        # Setup map image container
+        self.map_container = Frame(self, borderwidth=1)
+        self.map_container.grid(row=1, column=0, sticky=W)
+
     def update_canvas(self, scale_value):
         self.canvas_widget.canvas.delete("all")
         self.canvas_widget.canvas.create_image(400, 300, image=self.bg_image)
         # self.canvas_widget.canvas.create_line(0, 0, 800, 600, fill="black")
         self.canvas_widget.draw_origin()
-
         for b_name in self.beacons_active:
             if self.beacons_active[b_name].get() == 0:  # check if beacon is set visible
                 continue
-            x, y = self.beacon_paths[b_name].start_point
-            for i in range(len(self.beacon_paths[b_name].vectors) - 1):
-                vector = self.beacon_paths[b_name].vectors[i][:2]
+
+            point_count = 0
+            for i in range(self.beacon_paths[b_name].vectors.shape[0] - 1):
                 time = self.beacon_paths[b_name].vectors[i][2]
-                if time > scale_value:
+                if time > int(scale_value):
+                    point_count = i+1
                     break
-                self.canvas_widget.draw_line((x, y), vector)
-                x, y = x + vector[0], y + vector[1]
-                print(vector, time)
+                if i+1 == self.beacon_paths[b_name].vectors.shape[0] - 1:
+                    point_count = i
+
+            vectors = self.beacon_paths[b_name].vectors[:point_count]
+            self.canvas_widget.draw_lines(self.beacon_paths[b_name].start_point, vectors)
 
 
 class TrackingFrame(Frame):
@@ -169,13 +182,13 @@ class CanvasWidget:
 
     def __init__(self, root, row=0, column=0):
         self.canvas = Canvas(root, width=800, height=600, bg="blue")
-        self.canvas.grid(row=row, column=column, columnspan=3, sticky='nsew')
+        self.canvas.grid(row=row, column=column, columnspan=3, rowspan=3, sticky='nsew')
         self.beacon = self.canvas.create_rectangle(0, 0, 20, 20, fill="blue")
         self.beacon = self.canvas.create_rectangle(0, 0, 20, 20, fill="red")
         self.canvas.bind('<Button-1>', self.place_beacon)
         self.cs_x = 0
         self.cs_y = 0
-        self.zoom = 10
+        self.zoom = 30
 
     def place_beacon(self, event):
         self.cs_x = event.x
@@ -185,13 +198,16 @@ class CanvasWidget:
     def draw_origin(self):
         self.canvas.create_oval(self.cs_x - 5, self.cs_y - 5, self.cs_x + 5, self.cs_y + 5, fill="yellow")
 
-    def draw_line(self, start, vector):
+    def draw_lines(self, start, vectors):
         x1 = self.cs_x + float(start[0])
         y1 = self.cs_y + float(start[1])
-        vector = np.multiply(vector, self.zoom)
-        x2 = self.cs_x + float(start[0]) + float(vector[0])
-        y2 = self.cs_y + float(start[1]) + float(vector[1])
-        self.canvas.create_line(x1, y1, x2, y2, fill="red", width=2)
+        for vector in vectors:
+            vector = np.multiply(vector, self.zoom)
+            x2 = x1 + float(vector[0])
+            y2 = y1 - float(vector[1])
+            self.canvas.create_line(x1, y1, x2, y2, fill="red", width=2)
+            x1 = x2
+            y1 = y2
 
     def update_beacon(self, x, y):
         # 0-location: top-left
@@ -225,7 +241,6 @@ def main(window):
     with open("C:/Users/karl3/Desktop/test_save_active_2.txt", "w", encoding="utf-8") as log:
         while True:
             try:
-                sleep(1)
                 coords = hedge.position()
                 if type(window._frame) == TrackingFrame:
                     window._frame.canvas.update_beacon(coords[1], coords[2])
