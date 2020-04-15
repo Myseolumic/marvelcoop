@@ -230,11 +230,12 @@ class CanvasWidget:
 
     def end_pan(self, event):
         if self.PANNING:
+            self.canvas.scan_dragto(event.x, event.y, gain=1)
             self.PANNING = False
 
     def place_beacon(self, event):
-        self.cs_x = event.x
-        self.cs_y = event.y
+        self.cs_x = self.canvas.canvasx(event.x)
+        self.cs_y = self.canvas.canvasy(event.y)
         self.draw_origin()
 
     def add_beacon(self):
