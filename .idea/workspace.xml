@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b20a8964-10fd-408a-8534-93c7f844e0cf" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/marvelcoop.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/marvelcoop.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -32,6 +31,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -114,6 +114,7 @@
       <workItem from="1585660143268" duration="13180000" />
       <workItem from="1586253591010" duration="3667000" />
       <workItem from="1586627885364" duration="9575000" />
+      <workItem from="1586944958962" duration="11773000" />
     </task>
     <task id="LOCAL-00001" summary="A lot of changes:&#10;- working replay system, needs optimizing&#10;- interfacing with marvelmind.py works. Just need to add more functionality&#10;- can now set coordinate origin by clicking on canvas">
       <created>1574173749880</created>
@@ -153,26 +154,30 @@
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
     <state x="-946" y="265" key="FileChooserDialogImpl/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1579727385215" />
-    <state width="1877" height="306" key="GridCell.Tab.0.bottom" timestamp="1586648663849">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1586985457518">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="306" key="GridCell.Tab.0.bottom/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586648663849" />
     <state width="1877" height="306" key="GridCell.Tab.0.bottom/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1586031861281" />
-    <state width="1877" height="306" key="GridCell.Tab.0.center" timestamp="1586648663848">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1586985457518" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1586985457518">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="306" key="GridCell.Tab.0.center/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586648663848" />
     <state width="1877" height="306" key="GridCell.Tab.0.center/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1586031861281" />
-    <state width="1877" height="306" key="GridCell.Tab.0.left" timestamp="1586648663848">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1586985457518" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1586985457518">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="306" key="GridCell.Tab.0.left/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586648663848" />
     <state width="1877" height="306" key="GridCell.Tab.0.left/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1586031861281" />
-    <state width="1877" height="306" key="GridCell.Tab.0.right" timestamp="1586648663849">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1586985457518" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1586985457518">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="306" key="GridCell.Tab.0.right/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586648663849" />
     <state width="1877" height="306" key="GridCell.Tab.0.right/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1586031861281" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1586985457518" />
     <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1586253576311">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
@@ -189,10 +194,11 @@
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="348" key="GridCell.Tab.1.right/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1586253576311" />
-    <state x="-1224" y="153" key="SettingsEditor" timestamp="1579727788243">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state x="696" y="153" key="SettingsEditor" timestamp="1586944984886">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="-1224" y="153" key="SettingsEditor/-1920.0.1920.1040/0.0.1920.1040@-1920.0.1920.1040" timestamp="1579727788243" />
+    <state x="696" y="153" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1586944984886" />
     <state x="-1368" y="254" key="Vcs.Push.Dialog.v2" timestamp="1582628207935">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
@@ -208,6 +214,6 @@
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1579732338658" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/marvelcoop$tracker.coverage" NAME="tracker Coverage Results" MODIFIED="1586648663841" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/marvelcoop$tracker.coverage" NAME="tracker Coverage Results" MODIFIED="1586985457502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
