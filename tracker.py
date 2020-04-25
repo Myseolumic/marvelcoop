@@ -1,27 +1,24 @@
-from marvelmind import MarvelmindHedge
-from time import sleep
-import numpy as np
-import sys
 import os
-import threading as th
+import time
+import tkinter.filedialog as filedialog
+import schedule
 from tkinter import *
-import tkinter.filedialog as FileDialog
-from PIL import ImageTk
+
+import numpy as np
+from PIL import Image, ImageTk
+
+from marvelmind import MarvelmindHedge
 
 
 # whole app requires: pyserial, crcmod, matplotlib, Pillow, numpy
-class SampleApp(Tk):
+class MainApp(Tk):
     def __init__(self):
         Tk.__init__(self)
         self._frame = None
-        #self.geometry("1280x720")
         self.title("Coopi tracker")
-        # self.commThread = CommThread()
-        # self.commThread.setDaemon(True)
         self.switch_frame(ReplayFrame)
 
     def switch_frame(self, frame_class):
-        print("switched window")
         new_frame = frame_class(self)
         if self._frame is not None:
             self._frame.destroy()
@@ -57,7 +54,7 @@ class ReplayFrame(Frame):
         # Init objects
         Frame.__init__(self, root)
         self.canvas_widget = CanvasWidget(self, 0, 1)
-        self.file = FileDialog.askopenfile(parent=root, mode='r', title='Choose a file')
+        self.file = filedialog.askopenfile(parent=root, mode='r', title='Choose a file')
         self.beacons_active = {}
         self.beacon_paths = {}
 
@@ -93,15 +90,17 @@ class ReplayFrame(Frame):
                 self.start_time = start
             if end > self.end_time:
                 self.end_time = end
-        self.scale = Scale(self, from_=self.start_time, to=self.end_time, orient=HORIZONTAL, command=self.update_canvas)
-        self.scale.grid(row=1, column=0, columnspan=1, sticky=W)
+        self.scale_container = Frame(self)
+        self.scale = Scale(self.scale_container, from_=self.start_time, length=400, to=self.end_time, orient=HORIZONTAL, command=self.update_canvas)
+        self.scale_container.grid(row=4, column=1, columnspan=3, sticky=W)
+        self.scale.grid(row=0, column=0, sticky=W)
 
         # Setup Checkboxes for enabling beacons
         j = 0
         self.beacons_container = Frame(self, borderwidth=1)
         for beacon in self.beacon_paths:
             self.beacons_active[beacon] = IntVar()
-            Checkbutton(self.beacons_container, text="Beacon " + beacon, variable=self.beacons_active[beacon]).grid(
+            Checkbutton(self.beacons_container, text="Hedgehog " + beacon, variable=self.beacons_active[beacon]).grid(
                 row=j, sticky=W)
             j += 1
         self.beacons_container.grid(row=0, column=0, sticky=W)
@@ -111,12 +110,12 @@ class ReplayFrame(Frame):
         self.controls_container.grid(row=2, column=0, sticky=W)
 
         # First draw
-        self.update_canvas(0)
+        self.update_canvas()
 
-    def update_canvas(self, scale_value):
-        self.canvas_widget.canvas.delete("all")
-        self.canvas_widget.canvas.create_image(400, 300, image=self.canvas_widget.floor_plan)
+    def update_canvas(self, scale_value=0):
+        self.canvas_widget.clear()
         self.canvas_widget.draw_origin()
+        scale_value = self.scale.get()
         for b_name in self.beacons_active:
             if self.beacons_active[b_name].get() == 0:  # check if beacon is set visible
                 continue
@@ -168,55 +167,77 @@ class CanvasWidget:
 
     def __init__(self, root, row=0, column=0):
         self.root = root
-        self.canvas = Canvas(root, width=800, height=600, bg="blue")
-        self.canvas.grid(row=row, column=column, columnspan=3, rowspan=3, sticky='nsew')
-        self.beacon = self.canvas.create_rectangle(0, 0, 20, 20, fill="red")
-        self.floor_plan = ImageTk.PhotoImage(file='test_image.png')
-        self.canvas.bind('<Button-1>', self.handle_mouse_click)
-        # self.canvas.bind('<MouseWheel>', self.handle_mouse_wheel)
-        self.canvas.bind('<B1-Motion>', self.pan_canvas)
-        self.canvas.bind('<ButtonRelease-1>', self.end_pan)
+        self.canvas_container = Frame(root)
+        self.canvas_container.grid(row=row, column=column, columnspan=3, rowspan=3, sticky='nsew')
+        self.canvas = Canvas(self.canvas_container, width=800, height=600, bg="#8c8c8c")
+        self.canvas.grid(row=0, column=0, columnspan=3, rowspan=3, sticky='nsew')
+
+        # reference points for scaling
+        self.zero = self.canvas.create_text(0, 0, anchor='nw', text='0')
         self.cs_x = 0
         self.cs_y = 0
+        self.origin_id = self.canvas.create_oval(self.cs_x - 5, self.cs_y - 5, self.cs_x + 5, self.cs_y + 5, fill="yellow")
+
+        self.PLACING_BEACON = False
+        self.PANNING = False
         self.origin_rotation = ["N", "E"]
         self.zoom = 10
 
-        self.PLACING_BEACON = False
-        self.PLACING_IMAGE = False
-        self.PANNING = False
+        self.floor_plan_path = 'test_image.png'
+        self.floor_plan = ImageTk.PhotoImage(file=self.floor_plan_path)
+        self.floor_plan_image = Image.open(self.floor_plan_path)
+        self.floor_plan_scale = 1.0
+        self.draw_floor_plan()
+
+        self.canvas.bind('<Button-1>', self.handle_mouse_click)
+        self.canvas.bind('<MouseWheel>', self.handle_mouse_wheel)
+        self.canvas.bind('<B1-Motion>', self.pan_canvas)
+        self.canvas.bind('<ButtonRelease-1>', self.end_pan)
+
+        self.clear_ids = []
+        #self.canvas.config(scrollregion=self.canvas.bbox('all'))
 
     def refresh(self):
-        self.canvas.delete("all")
-        self.canvas.create_image(400, 300, image=self.floor_plan)
-        self.draw_origin()
+        self.root.update_canvas()
 
-    def handle_mouse_wheel(self, event):
-        """ Zoom with mouse wheel """
-        x = self.canvas.canvasx(event.x)  # get coordinates of the event on the canvas
-        y = self.canvas.canvasy(event.y)
+    def clear(self):
+        for i in self.clear_ids:
+            self.canvas.delete(i)
+        self.clear_ids = []
 
-        scale = 1.0
-        if event.delta == -120:  # scroll down
-            print("scrolling down")
-        if event.delta == 120:  # scroll up, bigger
-            print("scrolling up")
-
-        #self.canvas.scale('all', x, y, scale, scale)  # rescale all objects
-
-    def handle_mouse_click(self, event):
-        print(self.PLACING_BEACON)
-        if self.PLACING_BEACON:
-            self.place_beacon(event)
-            self.PLACING_BEACON = False
-        else:
-            self.canvas.scan_mark(event.x, event.y)
-            self.PANNING = True
+    def get_zero_reference(self):
+        return self.canvas.coords(self.zero)
 
     def set_origin_rotation(self, val):
         if val in ("N", "S"):
             self.origin_rotation[0] = val
         elif val in ("E", "W"):
             self.origin_rotation[1] = val
+
+    def handle_mouse_wheel(self, event):
+        x = self.canvas.canvasx(event.x)
+        y = self.canvas.canvasy(event.y)
+
+        scale = 1.0
+        if event.delta == -120: # scroll down
+            scale *= 0.8
+            self.floor_plan_scale *= 0.8
+        if event.delta == 120: # scroll up
+            scale /= 0.8
+            self.floor_plan_scale /= 0.8
+
+        self.canvas.scale('all', x, y, scale, scale)
+        self.new_rescale_image()
+        self.update_origin()
+
+    def handle_mouse_click(self, event):
+        print(event)
+        if self.PLACING_BEACON:
+            self.place_beacon(event)
+            self.PLACING_BEACON = False
+        else:
+            self.canvas.scan_mark(event.x, event.y)
+            self.PANNING = True
 
     def pan_canvas(self, event):
         if self.PANNING:
@@ -237,26 +258,61 @@ class CanvasWidget:
         self.PLACING_BEACON = True
 
     def add_floor_plan(self):
-        img_file = FileDialog.askopenfilename(initialdir="./", title='Choose a file', filetypes=(("image files", "*.jpg;*.png"), ("all files", "*.*")))
+        img_file = filedialog.askopenfilename(initialdir="./", title='Choose a file', filetypes=(("image files", "*.jpg;*.png"), ("all files", "*.*")))
         if img_file and os.path.exists(img_file) and os.path.isfile(img_file):
             self.floor_plan = ImageTk.PhotoImage(file=img_file)
+            self.floor_plan_path = img_file
+            self.floor_plan_image = Image.open(self.floor_plan_path)
+            self.floor_plan_scale = 1.0
             self.refresh()
 
+    def rescale_image(self, x, y):
+        self.floor_plan_scale = self.scale
+        size = (int(self.floor_plan_image.width * self.scale), int(self.floor_plan_image.height * self.scale))
+        self.floor_plan = ImageTk.PhotoImage(self.floor_plan_image.resize(size))
+        # ((coord - offset) * scale + offset)
+        self.floor_plan_x = (self.floor_plan_x - x) * self.scale + x
+        self.floor_plan_y = (self.floor_plan_y - y) * self.scale + y
+        self.draw_floor_plan()
+
+    def new_rescale_image(self):
+        width, height = self.floor_plan_image.size
+        new_size = int(self.floor_plan_scale * width), int(self.floor_plan_scale * height)
+        self.floor_plan = ImageTk.PhotoImage(self.floor_plan_image.resize(new_size))
+        self.draw_floor_plan()
+
+    def draw_floor_plan(self):
+        img_id = self.canvas.create_image(self.get_zero_reference(), image=self.floor_plan)
+        self.canvas.lower(img_id)
+
     def draw_origin(self):
-        self.canvas.create_oval(self.cs_x - 5, self.cs_y - 5, self.cs_x + 5, self.cs_y + 5, fill="yellow")
+        self.canvas.coords(self.origin_id, self.cs_x - 5, self.cs_y - 5, self.cs_x + 5, self.cs_y + 5)
+
+    def update_origin(self):
+        arr = self.canvas.coords(self.origin_id)
+        self.cs_x = arr[0]
+        self.cs_y = arr[1]
 
     def draw_lines(self, start, vectors):
         r = 3
         x1 = self.cs_x + float(start[0])
         y1 = self.cs_y + float(start[1])
+        i = self.canvas.create_oval(x1 - r, y1 - r, x1 + r, y1 + r, fill="red")
+        self.clear_ids.append(i)
         for vector in vectors:
-            vector = np.multiply(vector, self.zoom)
+            vector = np.multiply(vector, self.zoom * self.floor_plan_scale)
             x2 = self.calc_x(x1, vector[0])
             y2 = self.calc_y(y1, vector[1])
-            self.canvas.create_line(x1, y1, x2, y2, fill="red", width=2)
-            self.canvas.create_oval(x1-r, y1-r, x1+r, y1+r, fill="red")
+            i = self.canvas.create_line(x1, y1, x2, y2, fill="red", width=2)
+            j = self.canvas.create_oval(x2-r, y2-r, x2+r, y2+r, fill="red")
+            self.clear_ids.append(i)
+            self.clear_ids.append(j)
             x1 = x2
             y1 = y2
+
+    def draw_hedgehog(self, x, y, color="red"):
+        r = 5
+        self.canvas.create_rectangle(x-r, y-r, x+r, y+r, fill=color)
 
     def calc_x(self, x, val):
         if self.origin_rotation[1] == "E":
@@ -292,43 +348,10 @@ class TrackingFrame(Frame):
         Frame.__init__(self, root)
         self.root = root
         self.canvas = CanvasWidget(self)
-        CanvasControls(self, self.canvas)
-        self.menubar(root)
-
-    def menubar(self, root):
-        menu = Menu(root)
-        root.config(menu=menu)
-
-        editMenu = Menu(menu)
-        editMenu.add_command(label="Place origin beacon", command=self.canvas.place_beacon)
-        editMenu.add_command(label="Add room plan", command=self.place_beacon)
-        menu.add_cascade(label="Edit", menu=editMenu)
-
-        menu.add_command(label="Replays", command=lambda: self.root.switch_frame(ReplayFrame))
-
-    def place_beacon(self):
-        print("placed.")
-
-
-# feeds info into TrackingFrame
-class CommThread(th.Thread):
-
-    def __init__(self):
-        th.Thread.__init__(self)
-        hedge = MarvelmindHedge(tty="\\.\COM4", adr=None, debug=False)  # create MarvelmindHedge thread
-        hedge.start()  # start thread
-        with open("C:/Users/karl3/Desktop/test_save_active_2.txt", "w", encoding="utf-8") as log:
-            while True:
-                try:
-                    sleep(1)
-                    coords = hedge.position()
-                    # currentpoint = (coords[1], coords[2])
-                    if self.valid_coords(coords):
-                        log.write(str(coords) + "\n")
-
-                except KeyboardInterrupt:
-                    hedge.stop()  # stop and close serial port
-                    sys.exit()
+        self.hedge = MarvelmindHedge(tty="\\.\COM4", adr=None, debug=False)  # create MarvelmindHedge thread
+        self.hedge.start()  # start thread
+        #hedge.stop()
+        schedule.every(1).second.do(self.communicate)
 
     @staticmethod
     def valid_coords(coords):
@@ -336,11 +359,15 @@ class CommThread(th.Thread):
             return False
         return True
 
+    def communicate(self):
+        coords = self.hedge.position()
+        if self.valid_coords(coords):
+            # log.write(str(coords) + "\n")
+            self.canvas.draw_hedgehog(coords[1], coords[2], "orange")
+            print(coords)
+        else:
+            print("Modem not connected!")
 
-def valid_coords(coords):
-    if coords[0] == 0 and coords[1] == 0 and coords[2] == 0 and coords[3] == 0:
-        return False
-    return True
 
 
 def main(window):
@@ -364,4 +391,4 @@ def main(window):
 
 #main(SampleApp())
 
-SampleApp().mainloop()
+MainApp().mainloop()
