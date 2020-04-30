@@ -3,6 +3,7 @@ import time
 import tkinter.filedialog as filedialog
 import schedule
 import threading
+import random
 import exporter as exp
 from tkinter import *
 
@@ -18,7 +19,7 @@ class MainApp(Tk):
         Tk.__init__(self)
         self._frame = None
         self.title("Coopi tracker")
-        self.switch_frame(ReplayFrame)
+        self.switch_frame(TrackingFrame)
         self.protocol("WM_DELETE_WINDOW", self.app_close_callback)
 
     def switch_frame(self, frame_class):
@@ -169,6 +170,7 @@ class CanvasWidget:
         self.canvas_container.grid(row=row, column=column, columnspan=3, rowspan=3, sticky='nsew')
         self.canvas = Canvas(self.canvas_container, width=800, height=600, bg="#8c8c8c")
         self.canvas.grid(row=0, column=0, columnspan=3, rowspan=3, sticky='nsew')
+        self.drawn_hedgehogs = {}
 
         # reference points for scaling
         self.zero = self.canvas.create_text(0, 0, anchor='nw', text='0')
@@ -309,9 +311,15 @@ class CanvasWidget:
             x1 = x2
             y1 = y2
 
-    def draw_hedgehog(self, x, y, color="red"):
+    def draw_hedgehog(self, arr):
         r = 5
-        self.canvas.create_rectangle(x-r, y-r, x+r, y+r, fill=color)
+        id = arr[0]
+        x = arr[1] * 10
+        y = arr[2] * 10
+        if id not in self.drawn_hedgehogs:
+            rand = lambda: random.randint(0, 255)
+            self.drawn_hedgehogs[id] = '#{:02x}{:02x}{:02x}'.format(rand(), rand(), rand())
+        self.canvas.create_rectangle(x-r, y-r, x+r, y+r, fill=self.drawn_hedgehogs[id])
 
     def calc_x(self, x, val):
         if self.origin_rotation[1] == "E":
@@ -347,8 +355,11 @@ class TrackingFrame(Frame):
         Frame.__init__(self, root)
         self.root = root
         self.canvas = CanvasWidget(self)
-        self.hedge = MarvelmindHedge(tty="\\.\COM4", adr=None, debug=False)  # create MarvelmindHedge thread
+        self.controls_container = CanvasControls(self, self.canvas)
+        self.controls_container.grid(row=2, column=0, sticky=W)
+        self.hedge = MarvelmindHedge(tty="\\.\COM3", adr=None, debug=False)  # create MarvelmindHedge thread
         self.start_comms()
+        self.ram_log = []
 
     @staticmethod
     def valid_coords(coords):
@@ -358,7 +369,7 @@ class TrackingFrame(Frame):
 
     def start_comms(self, i=1):
         self.hedge.start()  # start marvelmind thread
-        schedule.every(1).second.do(self.communicate)
+        schedule.every(1).seconds.do(self.communicate)
         cease = threading.Event()
 
         class ScheduleThread(threading.Thread):
@@ -375,11 +386,19 @@ class TrackingFrame(Frame):
     def communicate(self):
         coords = self.hedge.position()
         if self.valid_coords(coords):
-            # log.write(str(coords) + "\n")
-            self.canvas.draw_hedgehog(coords[1], coords[2], "orange")
-            print(coords)
+            self.parse_hedgehogs(list(self.hedge.valuesUltrasoundPosition))
         else:
             print("Modem not connected!")
+
+    def parse_hedgehogs(self, raw_data):
+        parsed_hedgehogs = []
+        for arr in raw_data:
+            id = arr[0]
+            if id not in parsed_hedgehogs:
+                parsed_hedgehogs.append(id)
+                self.ram_log.append(arr)
+                self.canvas.draw_hedgehog(arr)
+
 
     def onclose(self):
         self.hedge.stop()
