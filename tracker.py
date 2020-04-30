@@ -2,6 +2,8 @@ import os
 import time
 import tkinter.filedialog as filedialog
 import schedule
+import threading
+import exporter as exp
 from tkinter import *
 
 import numpy as np
@@ -17,6 +19,7 @@ class MainApp(Tk):
         self._frame = None
         self.title("Coopi tracker")
         self.switch_frame(ReplayFrame)
+        self.protocol("WM_DELETE_WINDOW", self.app_close_callback)
 
     def switch_frame(self, frame_class):
         new_frame = frame_class(self)
@@ -27,6 +30,10 @@ class MainApp(Tk):
 
         if frame_class == ReplayFrame:
             self._frame.canvas_widget.menubar(self)
+
+    def app_close_callback(self):
+        self._frame.onclose()
+        self.destroy()
 
 
 class BeaconPath(object):
@@ -53,29 +60,15 @@ class ReplayFrame(Frame):
     def __init__(self, root):
         # Init objects
         Frame.__init__(self, root)
-        self.canvas_widget = CanvasWidget(self, 0, 1)
-        self.file = filedialog.askopenfile(parent=root, mode='r', title='Choose a file')
         self.beacons_active = {}
         self.beacon_paths = {}
 
-        # parse raw data into an id-based dictionary
-        beacons = {}
-        prev_parts = None
-        for line in self.file.readlines():
-            parts = line.strip().replace(' ', '')[1:-1].split(',')
-
-            for i in range(len(parts[1:-1])):
-                parts[i + 1] = float(parts[i + 1])
-            parts[-1] = int(parts[-1])
-            if parts == prev_parts:
-                continue
-
-            if parts[0] not in beacons.keys():
-                beacons[parts[0]] = []
-
-            beacons[parts[0]].append(parts[1:])
-            prev_parts = parts[:]
-        self.file.close()
+        zip_file = filedialog.askopenfilename(initialdir="./", title='Choose a file',
+                                              filetypes=(("zip files", "*.zip"), ("all files", "*.*")))
+        data = exp.import_file(zip_file)
+        beacons = data["beacons"]
+        self.canvas_widget = CanvasWidget(self, 0, 1, data["img"])
+        self.start_date = data["date"]
 
         # generate BeaconPaths
         for key in beacons:
@@ -90,10 +83,12 @@ class ReplayFrame(Frame):
                 self.start_time = start
             if end > self.end_time:
                 self.end_time = end
-        self.scale_container = Frame(self)
+        self.scale_container = Frame(self, padx=100)
+        datetext = "Date (start):" + self.start_date
+        Label(self.scale_container, text=datetext).grid(row=0, column=0, sticky=W)
         self.scale = Scale(self.scale_container, from_=self.start_time, length=400, to=self.end_time, orient=HORIZONTAL, command=self.update_canvas)
         self.scale_container.grid(row=4, column=1, columnspan=3, sticky=W)
-        self.scale.grid(row=0, column=0, sticky=W)
+        self.scale.grid(row=0, column=1, sticky=W)
 
         # Setup Checkboxes for enabling beacons
         j = 0
@@ -131,6 +126,9 @@ class ReplayFrame(Frame):
             vectors = self.beacon_paths[b_name].vectors[:point_count]
             self.canvas_widget.draw_lines(self.beacon_paths[b_name].start_point, vectors)
 
+    def onclose(self):
+        self.destroy()
+
 
 class CanvasControls(Frame):
 
@@ -165,7 +163,7 @@ class CanvasControls(Frame):
 
 class CanvasWidget:
 
-    def __init__(self, root, row=0, column=0):
+    def __init__(self, root, row=0, column=0, img=None):
         self.root = root
         self.canvas_container = Frame(root)
         self.canvas_container.grid(row=row, column=column, columnspan=3, rowspan=3, sticky='nsew')
@@ -183,9 +181,13 @@ class CanvasWidget:
         self.origin_rotation = ["N", "E"]
         self.zoom = 10
 
-        self.floor_plan_path = 'test_image.png'
-        self.floor_plan = ImageTk.PhotoImage(file=self.floor_plan_path)
-        self.floor_plan_image = Image.open(self.floor_plan_path)
+        if img is None:
+            self.floor_plan = ImageTk.PhotoImage(file='test_image.png')
+            self.floor_plan_image = Image.open('test_image.png')
+        else:
+            self.floor_plan_image = Image.open(img)
+            self.floor_plan = ImageTk.PhotoImage(self.floor_plan_image)
+
         self.floor_plan_scale = 1.0
         self.draw_floor_plan()
 
@@ -195,7 +197,6 @@ class CanvasWidget:
         self.canvas.bind('<ButtonRelease-1>', self.end_pan)
 
         self.clear_ids = []
-        #self.canvas.config(scrollregion=self.canvas.bbox('all'))
 
     def refresh(self):
         self.root.update_canvas()
@@ -231,7 +232,6 @@ class CanvasWidget:
         self.update_origin()
 
     def handle_mouse_click(self, event):
-        print(event)
         if self.PLACING_BEACON:
             self.place_beacon(event)
             self.PLACING_BEACON = False
@@ -261,8 +261,7 @@ class CanvasWidget:
         img_file = filedialog.askopenfilename(initialdir="./", title='Choose a file', filetypes=(("image files", "*.jpg;*.png"), ("all files", "*.*")))
         if img_file and os.path.exists(img_file) and os.path.isfile(img_file):
             self.floor_plan = ImageTk.PhotoImage(file=img_file)
-            self.floor_plan_path = img_file
-            self.floor_plan_image = Image.open(self.floor_plan_path)
+            self.floor_plan_image = Image.open(img_file)
             self.floor_plan_scale = 1.0
             self.refresh()
 
@@ -349,15 +348,29 @@ class TrackingFrame(Frame):
         self.root = root
         self.canvas = CanvasWidget(self)
         self.hedge = MarvelmindHedge(tty="\\.\COM4", adr=None, debug=False)  # create MarvelmindHedge thread
-        self.hedge.start()  # start thread
-        #hedge.stop()
-        schedule.every(1).second.do(self.communicate)
+        self.start_comms()
 
     @staticmethod
     def valid_coords(coords):
         if coords[0] == 0 and coords[1] == 0 and coords[2] == 0 and coords[3] == 0:
             return False
         return True
+
+    def start_comms(self, i=1):
+        self.hedge.start()  # start marvelmind thread
+        schedule.every(1).second.do(self.communicate)
+        cease = threading.Event()
+
+        class ScheduleThread(threading.Thread):
+            @classmethod
+            def run(cls):
+                while not cease.is_set():
+                    schedule.run_pending()
+                    time.sleep(i)
+
+        continuous_thread = ScheduleThread()
+        continuous_thread.start()
+        return cease
 
     def communicate(self):
         coords = self.hedge.position()
@@ -368,27 +381,9 @@ class TrackingFrame(Frame):
         else:
             print("Modem not connected!")
 
+    def onclose(self):
+        self.hedge.stop()
+        self.destroy()
 
-
-def main(window):
-    hedge = MarvelmindHedge(tty="\\.\COM4", adr=None, debug=False)  # create MarvelmindHedge thread
-    hedge.start()  # start thread
-    with open("C:/Users/karl3/Desktop/test_save_active_2.txt", "w", encoding="utf-8") as log:
-        while True:
-            try:
-                coords = hedge.position()
-                if type(window._frame) == TrackingFrame:
-                    window._frame.canvas.update_beacon(coords[1], coords[2])
-                if valid_coords(coords):
-                    log.write(str(coords) + "\n")
-                    print(coords)
-                window.update()
-
-            except KeyboardInterrupt:
-                hedge.stop()  # stop and close serial port
-                sys.exit()
-
-
-#main(SampleApp())
 
 MainApp().mainloop()
